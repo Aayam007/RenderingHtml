@@ -1,0 +1,78 @@
+@*
+    TAG HELPERS + MODEL BINDING + VALIDATION — Views/Home/Create.cshtml
+
+    TAG HELPERS:
+      Special "asp-*" attributes processed on the server that generate correct HTML.
+      They replace the older Html.BeginForm() / Html.TextBoxFor() HTML Helpers.
+
+      asp-action / asp-controller on <form>
+          Generates: <form method="post" action="/Home/Create">
+          Also automatically injects a hidden anti-forgery (CSRF) token field.
+
+      asp-for on <label>
+          Generates: <label for="Name">Name</label>
+          The "for" attribute matches the input id so clicking the label focuses the input.
+
+      asp-for on <input>
+          Generates id, name, type, and value attributes from the model property.
+          - id / name are used by Model Binding to map the value back to Student.Name etc.
+          - type is inferred from the C# type (string → text, int → number).
+          - value is re-populated from the model on a failed POST (preserves user input).
+
+      asp-validation-summary="All"
+          Renders a <ul> listing ALL model error messages after a failed POST.
+
+      asp-validation-for on <span>
+          Renders the specific error message for one property (e.g. Name).
+          Hidden when there are no errors; shown in red when validation fails.
+
+    MODEL BINDING:
+      When the form is submitted, ASP.NET reads each input's name attribute and maps
+      the value to the matching Student property automatically.
+      asp-for ensures the name attribute always equals the property name.
+
+    CLIENT-SIDE VALIDATION:
+      asp-for also writes data-val-* attributes on inputs.
+      The jQuery Validation scripts (loaded in @section Scripts) read these attributes
+      and validate the form in the browser before it is submitted to the server.
+      Server-side validation (ModelState.IsValid) still runs as the final guard.
+*@
+@model RenderingHTML.Models.Student
+
+@{
+    ViewData["Title"] = "Add Student";
+}
+
+<h2>Add New Student</h2>
+<hr />
+
+<form asp-action="Create" asp-controller="Home" method="post">
+
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" placeholder="Enter full name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Course" class="form-label"></label>
+        <input asp-for="Course" class="form-control" placeholder="e.g. BCA, MIT, BIM" />
+        <span asp-validation-for="Course" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Age" class="form-label"></label>
+        <input asp-for="Age" class="form-control" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Student</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
+
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,0 +1,66 @@
+@*
+    RAZOR SYNTAX — Views/Home/Index.cshtml
+
+    @model      : Razor directive that declares the C# type this view receives from the controller.
+                  Gives IntelliSense and compile-time type checking inside the view.
+
+    @{ ... }    : Razor code block — write plain C# here. Output is NOT written to HTML.
+                  Used for setting variables, calling methods, etc.
+
+    @expression : An @ followed by a C# expression is evaluated on the server and its result
+                  is written as HTML-encoded text in the response.
+                  Example: @student.Name outputs the student's name.
+
+    @foreach    : Razor control flow — mix C# loops/conditionals directly into HTML markup.
+
+    TAG HELPERS (asp-* attributes):
+      Processed on the server before the HTML is sent to the browser.
+      They generate correct href/action URLs automatically — no hard-coded paths needed.
+
+      asp-controller  : Name of the MVC controller to link to.
+      asp-action      : Name of the action method to link to.
+      asp-route-id    : Appends a route parameter (e.g. /Home/Details/1).
+*@
+@model List<RenderingHTML.Models.Student>
+
+@{
+    ViewData["Title"] = "Student List";
+    int totalStudents = Model.Count;
+}
+
+<h2>Student List</h2>
+<p>Total students: <strong>@totalStudents</strong></p>
+@{
+    int a= 10;
+    int b =20;
+    int c = a+b;
+}
+<h1> value of C: @c</h1>
+<a asp-controller="Home" asp-action="Privacy" class="btn btn-info mb-3">Go to Privacy</a>
+
+<a asp-controller="Home" asp-action="Create" class="btn btn-success mb-3">Add New Student</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Course</th><th>Age</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Id</td>
+                <td>@student.Name</td>
+                <td>@student.Course</td>
+                <td>@student.Age</td>
+                <td>
+                    <a asp-controller="Home"
+                       asp-action="Details"
+                       asp-route-id="@student.Id"
+                       class="btn btn-primary btn-sm">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
